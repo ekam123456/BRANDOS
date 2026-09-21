@@ -1,19 +1,17 @@
-import { auth } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 import { isClerkConfigured } from "@/lib/auth";
+import { requirePermission } from "@/lib/authorization";
 
 export async function GET() {
   if (!isClerkConfigured) {
     return NextResponse.json({ error: "Authentication is not configured." }, { status: 503 });
   }
 
-  const { isAuthenticated, userId, orgId } = await auth();
-  if (!isAuthenticated || !userId) {
-    return NextResponse.json({ error: "Authentication required." }, { status: 401 });
+  try {
+    const { userId, organizationId } = await requirePermission("business.read");
+    return NextResponse.json({ userId, organizationId });
+  } catch (error) {
+    const status = error instanceof Error && "status" in error && (error.status === 401 || error.status === 403) ? error.status : 500;
+    return NextResponse.json({ error: status === 500 ? "Unable to authorize request." : error instanceof Error ? error.message : "Unable to authorize request." }, { status });
   }
-  if (!orgId) {
-    return NextResponse.json({ error: "An active organization is required." }, { status: 403 });
-  }
-
-  return NextResponse.json({ userId, organizationId: orgId });
 }
