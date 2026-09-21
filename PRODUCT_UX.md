@@ -1,0 +1,33 @@
+# BRANDOS authenticated product experience
+
+## Milestone 5A status
+
+- **Implemented:** An authenticated product shell with Today, Business Brain, Intelligence, Journey, Work, Automations, Analytics, Connections, and Settings navigation.
+- **Implemented:** A resumable first-use flow covering product introduction, adaptive business discovery, Business Map confirmation, connection setup, primary goal, truthful plan-building state, journey preview, and first mission state.
+- **Implemented:** Responsive product primitives for page headers, empty states, status badges, choice cards, journey nodes, mission panels, and connection panels.
+- **Implemented:** Local draft persistence for onboarding so a user can pause and resume the experience in the same browser.
+- **Truthful boundary:** The onboarding draft is UX scaffolding only. It is not tenant database state and does not grant permissions or create business records.
+
+## Product truth
+
+The application intentionally does not fabricate business data, metrics, connections, intelligence, recommendations, journey progress, mission completion, or outcomes. Areas without verified data use explicit empty or waiting states and explain what is missing.
+
+The first-use experience is currently a client-side product prototype behind the existing protected route boundary. Persisting the quiz, Business Map, goal, journey, and mission to PostgreSQL requires a future server-side domain implementation with Clerk authorization, RLS-scoped transactions, validation, and audit events.
+
+## Navigation model
+
+The database schema is not exposed as navigation. The product model is:
+
+`Today → Brain → Intelligence → Journey → Work → Automations → Analytics → Connections`
+
+Settings contains setup review, product introduction re-entry, and future automation permission controls.
+
+## Deferred by design
+
+- AI analysis and recommendation generation
+- Real integrations and connection verification
+- Analytics and outcome measurement
+- Mission generation and completion persistence
+- Autonomous execution, agents, approvals, billing, and business-data mutations
+
+These are deliberate architecture boundaries, not simulated placeholders presented as live functionality.

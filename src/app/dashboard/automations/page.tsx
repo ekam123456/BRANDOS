@@ -1,0 +1,2 @@
+import { EmptyState, ProductHeader, ProductShell } from "@/components/ProductShell";
+export default function AutomationsPage() { return <ProductShell><ProductHeader eyebrow="Automations" title="Control how work gets done." description="Automation will eventually move from manual, to assisted, to approval-required, to automatic. Nothing runs here yet." /><EmptyState title="No automations configured.">Automation is intentionally not active in this foundation. Future controls will make permissions and approvals explicit.</EmptyState></ProductShell>; }

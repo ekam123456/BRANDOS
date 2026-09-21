@@ -1,0 +1,2 @@
+import { EmptyState, ProductHeader, ProductShell } from "@/components/ProductShell";
+export default function AnalyticsPage() { return <ProductShell><ProductHeader eyebrow="Analytics" title="Measure outcomes when there is real data." description="Analytics supports the journey; it does not replace understanding or action." /><EmptyState title="Not enough data yet.">Connect a supported source to begin understanding real activity. No charts or metrics are shown until data is available.</EmptyState></ProductShell>; }

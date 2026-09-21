@@ -1,0 +1,3 @@
+import Link from "next/link";
+import { EmptyState, ProductHeader, ProductShell } from "@/components/ProductShell";
+export default function JourneyPage() { return <ProductShell><ProductHeader eyebrow="Journey" title="A path built around what matters." description="Your goal becomes milestones, missions, and meaningful actions. The path adapts instead of assuming every business is the same." /><EmptyState title="No personalized journey has been built yet." action={<Link className="button" href="/onboarding">Define your primary goal</Link>}>Set up your business context and primary goal before BRANDOS builds a journey.</EmptyState></ProductShell>; }
