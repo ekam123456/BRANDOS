@@ -35,6 +35,21 @@ enum SourceType {
   SYSTEM
 }
 
+enum ConnectionStatus {
+  PENDING
+  CONNECTED
+  SYNCING
+  ERROR
+  EXPIRED
+  DISCONNECTED
+}
+
+enum SyncStatus {
+  RUNNING
+  SUCCEEDED
+  FAILED
+}
+
 model UserAccount {
   id             String       @id
   email          String?
@@ -68,6 +83,10 @@ model Organization {
   opportunities  Opportunity[]
   recommendations Recommendation[]
   tasks          Task[]
+  connections    Connection[]
+  syncRuns       SyncRun[]
+  ingestedRecords IngestedRecord[]
+  oauthStates    OAuthState[]
 }
 
 model Membership {
@@ -132,8 +151,91 @@ model Business {
   opportunities  Opportunity[]
   recommendations Recommendation[]
   tasks          Task[]
+  connections    Connection[]
+  ingestedRecords IngestedRecord[]
+  oauthStates    OAuthState[]
 
   @@unique([id, organizationId])
+}
+
+model Connection {
+  id                  String           @id @default(cuid())
+  organizationId      String
+  businessId          String
+  provider            String
+  status              ConnectionStatus @default(PENDING)
+  accountReference    String?
+  scopes              Json?
+  metadata            Json?
+  credentialCiphertext String?
+  credentialNonce     String?
+  credentialTag       String?
+  lastSuccessfulSync  DateTime?
+  lastAttemptedSync   DateTime?
+  errorCode           String?
+  createdAt           DateTime         @default(now())
+  updatedAt           DateTime         @updatedAt
+  organization        Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  business            Business         @relation(fields: [businessId, organizationId], references: [id, organizationId], onDelete: Cascade)
+  syncRuns            SyncRun[]
+  ingestedRecords     IngestedRecord[]
+  @@unique([organizationId, businessId, provider])
+  @@index([organizationId, status])
+  @@index([businessId])
+}
+
+model OAuthState {
+  id             String   @id @default(cuid())
+  organizationId String
+  businessId     String
+  provider       String
+  stateHash      String   @unique
+  codeVerifier   String?
+  expiresAt      DateTime
+  usedAt         DateTime?
+  createdAt      DateTime @default(now())
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  business       Business @relation(fields: [businessId, organizationId], references: [id, organizationId], onDelete: Cascade)
+  @@index([organizationId, expiresAt])
+}
+
+model SyncRun {
+  id             String     @id @default(cuid())
+  organizationId String
+  connectionId   String
+  status         SyncStatus @default(RUNNING)
+  startedAt      DateTime   @default(now())
+  completedAt    DateTime?
+  recordsProcessed Int       @default(0)
+  recordsCreated  Int       @default(0)
+  recordsUpdated  Int       @default(0)
+  errorCode       String?
+  providerRequestReference String?
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  connection     Connection @relation(fields: [connectionId], references: [id], onDelete: Cascade)
+  @@index([organizationId, startedAt])
+  @@index([connectionId, startedAt])
+}
+
+model IngestedRecord {
+  id             String      @id @default(cuid())
+  organizationId String
+  businessId     String
+  connectionId   String
+  externalId     String
+  recordType     String
+  payload        Json
+  sourceType     SourceType
+  sourceReference String?
+  observedAt     DateTime?
+  collectedAt    DateTime    @default(now())
+  freshness      String?
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  business       Business     @relation(fields: [businessId, organizationId], references: [id, organizationId], onDelete: Cascade)
+  connection     Connection   @relation(fields: [connectionId], references: [id], onDelete: Cascade)
+  @@unique([connectionId, recordType, externalId])
+  @@index([organizationId, collectedAt])
+  @@index([businessId, recordType])
 }
 
 model BusinessProfile {

@@ -5,6 +5,7 @@ BRANDOS uses PostgreSQL as the source of truth for application and business data
 ## Status
 
 - **IMPLEMENTED:** Prisma 7 PostgreSQL adapter, migrations, forced-RLS policies, tenant transaction helper, CI PostgreSQL service, and the Business Brain persistence model.
+- **IMPLEMENTED:** Connection, OAuth state, sync-run, and normalized ingested-record tables with direct tenant ownership and forced RLS.
 - **VERIFIED:** Schema validation, client generation, migration SQL review, and unit/build checks.
 - **DEPLOYMENT-GATED:** Applying the hardening migration to a real staging database and executing integration tests with a non-superuser/non-BYPASSRLS role.
 - **DEFERRED:** Production backup/restore execution, connection pool sizing, and provider-specific failover testing.
@@ -34,6 +35,8 @@ Completing onboarding upserts one organization-owned `Business`, stores the supp
 The hardening migration enables and forces PostgreSQL RLS on organization, membership, role, business, business child, audit, brand configuration, and role-permission tables. Policies compare direct `organizationId` values to the transaction-local `app.current_organization_id` setting. Application code establishes that setting with `withTenantTransaction`; the setting is local to one interactive Prisma transaction and cannot leak to a pooled connection. Application authorization remains mandatory: RLS is defense in depth, not a replacement for Clerk session and permission checks. The webhook uses `SYSTEM_DATABASE_URL` because synchronization must create and update records before a request tenant exists; that role must be explicitly controlled and never used for user-request data.
 
 The Business Brain migration applies the same forced-RLS policy to onboarding progress and every direct organization-owned Brain table. CI verifies the new product and provenance records are invisible without tenant context and across organizations using the non-bypass test role.
+
+The connections migration applies the same policy to `Connection`, `OAuthState`, `SyncRun`, and `IngestedRecord`. Provider credentials are encrypted ciphertext only; the database never receives a plaintext token.
 
 Do not claim database isolation is active until the hardening migration has been deployed with `npm run db:deploy` and the integration suite has run against PostgreSQL with `TEST_DATABASE_URL`.
 

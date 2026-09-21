@@ -15,6 +15,8 @@ The Stage 1 marketing site is deployed to Vercel. Public routes do not require C
 
 Configure these server-side values in the deployment provider:
 
+For the Google Analytics connection currently implemented, also configure `GOOGLE_OAUTH_CLIENT_ID`, `GOOGLE_OAUTH_CLIENT_SECRET`, `GOOGLE_ANALYTICS_REDIRECT_URI`, and `INTEGRATION_CREDENTIAL_ENCRYPTION_KEY`. The encryption key must be a base64-encoded 32-byte key held in the deployment provider's secret manager. Register the exact redirect URI in Google Cloud; do not accept a browser-provided redirect URI.
+
 - `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`
 - `CLERK_SECRET_KEY`
 - `CLERK_WEBHOOK_SIGNING_SECRET`

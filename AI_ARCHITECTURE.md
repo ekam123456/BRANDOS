@@ -8,3 +8,5 @@ Future intelligence must read tenant-scoped PostgreSQL records, explain evidence
 **IMPLEMENTED:** The Business Brain schema preserves provenance and knowledge type for structured user-provided context. It provides evidence relationships for future intelligence without embedding model calls or undocumented reasoning in the application.
 
 **DEFERRED:** No AI provider, model invocation, observation generation, recommendation generation, task generation, autonomous execution, or confidence scoring is implemented. Future intelligence must consume persisted evidence and retain a traceable explanation back to source records.
+
+Imported provider rows remain evidence (`IngestedRecord`) with source and freshness metadata. They are not interpreted into observations, problems, opportunities, recommendations, or tasks in this milestone.

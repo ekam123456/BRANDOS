@@ -100,6 +100,43 @@ describeDatabase("PostgreSQL tenant isolation", () => {
     await expect(prisma.$transaction((tx) => tx.product.findMany())).resolves.toEqual([]);
   });
 
+  it("isolates connection and ingested provider records", async () => {
+    const connectionA = await prisma.$transaction(async (tx) => {
+      await tx.$executeRaw`SELECT set_config('app.current_organization_id', ${organizationA}, true)`;
+      const business = await tx.business.findUniqueOrThrow({ where: { organizationId: organizationA } });
+      const connection = await tx.connection.create({
+        data: { organizationId: organizationA, businessId: business.id, provider: "test-provider", status: "CONNECTED", scopes: ["read-only"] },
+      });
+      await tx.ingestedRecord.create({
+        data: {
+          organizationId: organizationA,
+          businessId: business.id,
+          connectionId: connection.id,
+          externalId: "stable-record-1",
+          recordType: "test.metric",
+          payload: { value: 4 },
+          sourceType: "SYSTEM",
+          sourceReference: "test-provider",
+          freshness: "recent",
+        },
+      });
+      return connection;
+    });
+
+    const visible = await prisma.$transaction(async (tx) => {
+      await tx.$executeRaw`SELECT set_config('app.current_organization_id', ${organizationA}, true)`;
+      return { connections: await tx.connection.findMany(), records: await tx.ingestedRecord.findMany() };
+    });
+    expect(visible.connections.map((connection) => connection.id)).toEqual([connectionA.id]);
+    expect(visible.records).toHaveLength(1);
+
+    await prisma.$transaction(async (tx) => {
+      await tx.$executeRaw`SELECT set_config('app.current_organization_id', ${organizationB}, true)`;
+      expect(await tx.connection.findMany()).toEqual([]);
+      expect(await tx.ingestedRecord.findMany()).toEqual([]);
+    });
+  });
+
   it("enforces membership removal, permission removal, and audit persistence", async () => {
     const permission = await prisma.permission.upsert({
       where: { key: "integration.read" },

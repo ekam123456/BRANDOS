@@ -36,3 +36,9 @@ The onboarding completion write is now a protected state-changing route. It deri
 **IMPLEMENTED:** server-backed profile/goal persistence, tenant-scoped Brain reads, audit coverage for onboarding completion, and CI RLS coverage for new Brain tables.
 
 **DEFERRED:** full CSRF token/origin policy for future browser mutations, per-entity editing services, generated recommendations/tasks, and production provider configuration.
+
+## Integration boundary
+
+Google Analytics connection routes use authenticated organization context, local permissions, fixed provider/redirect configuration, PKCE, a short-lived single-use OAuth state bound to the organization and business, and same-origin browser initiation. Tokens are encrypted server-side and are never returned to clients. Connection, sync, and ingested-record tables use composite ownership and forced RLS. Provider requests use fixed Google destinations and a 15-second timeout; no user-supplied URL is fetched.
+
+**DEPLOYMENT-GATED:** managed encryption-key provisioning, Google Cloud consent/redirect configuration, and real provider account testing.

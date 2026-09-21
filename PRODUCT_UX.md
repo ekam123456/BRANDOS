@@ -9,6 +9,7 @@
 - **Implemented:** Responsive product primitives for page headers, empty states, status badges, choice cards, journey nodes, mission panels, and connection panels.
 - **Implemented:** Local draft persistence for onboarding so a user can pause and resume the experience in the same browser, plus server persistence when the Business Map is confirmed.
 - **Implemented:** Business Map confirmation stores the user-supplied profile, primary goal, onboarding provenance, and completion state behind the existing authorization boundary.
+- **Implemented:** Connections now show a real Google Analytics read-only authorization option and actual connection/sync/error/disconnect states when deployment configuration is present.
 - **Truthful boundary:** An unfinished local draft remains browser-local until confirmation. Server persistence never invents missing fields, metrics, recommendations, tasks, or outcomes.
 
 ## Product truth
@@ -30,6 +31,7 @@ Settings contains setup review, product introduction re-entry, and future automa
 - AI analysis and recommendation generation
 - Real integrations and connection verification
 - Analytics and outcome measurement
+- Additional providers and background sync scheduling
 - Mission generation and completion persistence
 - Autonomous execution, agents, approvals, billing, and business-data mutations
 
