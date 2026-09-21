@@ -9,5 +9,5 @@ export default function AuthProvider({ children }: Readonly<{ children: React.Re
     return children;
   }
 
-  return <ClerkProvider publishableKey={publishableKey}>{children}</ClerkProvider>;
+  return <ClerkProvider publishableKey={publishableKey} dynamic>{children}</ClerkProvider>;
 }

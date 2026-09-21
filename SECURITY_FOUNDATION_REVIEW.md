@@ -84,13 +84,14 @@ CLERK_SECRET_KEY
 CLERK_WEBHOOK_SIGNING_SECRET
 DATABASE_URL
 DIRECT_URL
+SYSTEM_DATABASE_URL
 NEXT_PUBLIC_CLERK_SIGN_IN_URL
 NEXT_PUBLIC_CLERK_SIGN_UP_URL
 NEXT_PUBLIC_CLERK_SIGN_IN_FALLBACK_REDIRECT_URL
 NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL
 ```
 
-`CLERK_SECRET_KEY`, `CLERK_WEBHOOK_SIGNING_SECRET`, `DATABASE_URL`, and `DIRECT_URL` must remain server-only. Use a restricted PostgreSQL role, TLS, pooled runtime connections, and a direct migration connection.
+`CLERK_SECRET_KEY`, `CLERK_WEBHOOK_SIGNING_SECRET`, `DATABASE_URL`, `DIRECT_URL`, and `SYSTEM_DATABASE_URL` must remain server-only. Use a restricted PostgreSQL runtime role without `BYPASSRLS`, a separately controlled system role for webhook synchronization, TLS, pooled runtime connections, and a direct migration connection.
 
 ## Before production authentication/database activation
 
@@ -101,3 +102,5 @@ NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL
 5. Add PostgreSQL integration tests for tenant scoping, membership revocation, webhook retry/idempotency, and all private APIs.
 6. Add audited domain services before creating or mutating business data.
 7. Re-evaluate RLS and CSP before exposing sensitive Business Brain records.
+
+Milestone 3 implements the hardening migration, tenant transaction helper, opt-in PostgreSQL integration tests, reusable audit service, Clerk-compatible CSP middleware, and dependency advisory inventory. RLS is not considered deployed until the migration is applied on the target database and the integration suite passes against that database.

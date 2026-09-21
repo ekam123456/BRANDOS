@@ -9,6 +9,10 @@ export default clerkMiddleware(async (auth, request) => {
   if (isProtectedRoute(request)) {
     await auth.protect();
   }
+}, {
+  contentSecurityPolicy: {
+    strict: true,
+  },
 });
 
 export const config = {

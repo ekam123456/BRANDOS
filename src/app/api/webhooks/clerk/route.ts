@@ -1,6 +1,8 @@
 import { verifyWebhook } from "@clerk/nextjs/webhooks";
 import { NextRequest } from "next/server";
-import { getPrisma } from "@/lib/prisma";
+import { Prisma } from "@/generated/prisma/client";
+import { recordAuditEventInTransaction } from "@/lib/audit";
+import { getSystemPrisma } from "@/lib/prisma";
 
 const permissionCatalog = [
   ["business.read", "Read business foundation records."],
@@ -9,7 +11,7 @@ const permissionCatalog = [
 ] as const;
 
 export async function POST(request: NextRequest) {
-  if (!process.env.CLERK_WEBHOOK_SIGNING_SECRET || !process.env.DATABASE_URL) {
+  if (!process.env.CLERK_WEBHOOK_SIGNING_SECRET || !process.env.SYSTEM_DATABASE_URL) {
     return new Response("Webhook integration is not configured.", { status: 503 });
   }
 
@@ -19,20 +21,16 @@ export async function POST(request: NextRequest) {
       return new Response("Missing webhook event ID.", { status: 400 });
     }
     const event = await verifyWebhook(request);
-    const prisma = getPrisma();
+    const prisma = getSystemPrisma();
     const existing = await prisma.clerkWebhookEvent.findUnique({ where: { id: eventId } });
     if (existing?.processedAt) {
       return new Response("ok", { status: 200 });
     }
 
-    await prisma.clerkWebhookEvent.upsert({
-      where: { id: eventId },
-      update: { eventType: event.type },
-      create: { id: eventId, eventType: event.type },
-    });
     const data = event.data as unknown as Record<string, unknown>;
 
     await prisma.$transaction(async (tx) => {
+      await tx.clerkWebhookEvent.create({ data: { id: eventId, eventType: event.type } });
       if (event.type === "user.created" || event.type === "user.updated") {
       const email = Array.isArray(data.email_addresses) ? (data.email_addresses[0] as Record<string, unknown> | undefined)?.email_address : undefined;
       await tx.userAccount.upsert({
@@ -54,6 +52,14 @@ export async function POST(request: NextRequest) {
       const memberRole = await tx.role.upsert({ where: { organizationId_key: { organizationId, key: "member" } }, update: { name: "Organization member" }, create: { organizationId, key: "member", name: "Organization member" } });
       await tx.rolePermission.createMany({ data: permissions.map(({ id }) => ({ roleId: adminRole.id, permissionId: id })), skipDuplicates: true });
       await tx.rolePermission.createMany({ data: permissions.filter(({ key }) => key === "business.read").map(({ id }) => ({ roleId: memberRole.id, permissionId: id })), skipDuplicates: true });
+      await recordAuditEventInTransaction(tx, {
+        organizationId,
+        action: event.type,
+        resourceType: "organization",
+        resourceId: organizationId,
+        metadata: { source: "clerk_webhook", eventId },
+        requestId: eventId,
+      });
       }
 
       if (event.type === "organization.deleted") {
@@ -71,18 +77,39 @@ export async function POST(request: NextRequest) {
         update: { roleId: role.id },
         create: { organizationId, userId, roleId: role.id },
       });
+      await recordAuditEventInTransaction(tx, {
+        organizationId,
+        actorUserId: userId,
+        action: event.type,
+        resourceType: "membership",
+        resourceId: `${organizationId}:${userId}`,
+        metadata: { source: "clerk_webhook", role: roleKey, eventId },
+        requestId: eventId,
+      });
       }
 
       if (event.type === "organizationMembership.deleted") {
       const organizationId = String((data.organization as Record<string, unknown> | undefined)?.id ?? data.organization_id);
       const userId = String((data.public_user_data as Record<string, unknown> | undefined)?.user_id ?? data.public_user_id);
         await tx.membership.deleteMany({ where: { organizationId, userId } });
+        await recordAuditEventInTransaction(tx, {
+          organizationId,
+          actorUserId: userId,
+          action: event.type,
+          resourceType: "membership",
+          resourceId: `${organizationId}:${userId}`,
+          metadata: { source: "clerk_webhook", eventId },
+          requestId: eventId,
+        });
       }
 
       await tx.clerkWebhookEvent.update({ where: { id: eventId }, data: { processedAt: new Date() } });
     });
     return new Response("ok", { status: 200 });
   } catch (error) {
+    if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
+      return new Response("ok", { status: 200 });
+    }
     console.error("Clerk webhook processing failed", error);
     return new Response("Invalid webhook or processing failure.", { status: 400 });
   }
