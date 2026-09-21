@@ -1,0 +1,142 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model UserAccount {
+  id             String       @id
+  email          String?
+  displayName    String?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  memberships    Membership[]
+  auditEvents    AuditEvent[] @relation("AuditActor")
+}
+
+model Organization {
+  id             String              @id
+  name           String
+  slug           String?
+  createdAt      DateTime            @default(now())
+  updatedAt      DateTime            @updatedAt
+  memberships    Membership[]
+  business       Business?
+  brandConfig    BrandConfiguration?
+  auditEvents    AuditEvent[]
+}
+
+model Membership {
+  organizationId String
+  userId         String
+  roleId         String
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user           UserAccount  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  role           Role         @relation(fields: [roleId], references: [id])
+
+  @@id([organizationId, userId])
+  @@index([userId])
+}
+
+model Role {
+  id           String         @id @default(cuid())
+  organizationId String?
+  key          String
+  name         String
+  createdAt    DateTime       @default(now())
+  memberships  Membership[]
+  permissions  RolePermission[]
+
+  @@unique([organizationId, key])
+  @@index([organizationId])
+}
+
+model Permission {
+  id          String         @id @default(cuid())
+  key         String         @unique
+  description String
+  roles       RolePermission[]
+}
+
+model RolePermission {
+  roleId       String
+  permissionId String
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+}
+
+model Business {
+  id             String          @id @default(cuid())
+  organizationId String          @unique
+  name           String
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  organization   Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  profile        BusinessProfile?
+  goals          BusinessGoal[]
+}
+
+model BusinessProfile {
+  id          String   @id @default(cuid())
+  businessId  String   @unique
+  industry    String?
+  description String?
+  website     String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  business    Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+}
+
+model BusinessGoal {
+  id          String   @id @default(cuid())
+  businessId  String
+  title       String
+  description String?
+  status      String   @default("active")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  business    Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+
+  @@index([businessId])
+}
+
+model AuditEvent {
+  id             String        @id @default(cuid())
+  organizationId String?
+  actorUserId    String?
+  action         String
+  resourceType   String
+  resourceId     String?
+  metadata       Json?
+  createdAt      DateTime      @default(now())
+  organization   Organization? @relation(fields: [organizationId], references: [id], onDelete: SetNull)
+  actor          UserAccount?  @relation("AuditActor", fields: [actorUserId], references: [id], onDelete: SetNull)
+
+  @@index([organizationId, createdAt])
+  @@index([actorUserId, createdAt])
+}
+
+model ClerkWebhookEvent {
+  id          String   @id
+  eventType   String
+  receivedAt  DateTime @default(now())
+  processedAt DateTime?
+}
+
+model BrandConfiguration {
+  id             String       @id @default(cuid())
+  organizationId String       @unique
+  name           String
+  logoUrl        String?
+  primaryColor   String?
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+}

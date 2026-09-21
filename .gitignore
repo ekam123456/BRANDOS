@@ -8,3 +8,6 @@ coverage
 *.tsbuildinfo
 .DS_Store
 *.log
+.vercel
+prisma/generated
+src/generated/prisma
