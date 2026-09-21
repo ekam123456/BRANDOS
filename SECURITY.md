@@ -28,3 +28,11 @@ Clerk secret keys, webhook signing secrets, and database URLs are server-only en
 The foundation includes pure cross-tenant rejection tests and a real PostgreSQL suite at `npm run test:integration`. CI provisions PostgreSQL and a non-bypass-RLS role before running it. Cross-tenant access remains release-blocking.
 
 The current code has no SSRF-capable fetcher, no user-controlled raw SQL, no agent execution surface, and no business write route. CSRF risk is limited by the current read-only private route and Clerk’s session model; state-changing routes must add same-origin/CSRF protection before implementation. Error logs contain generic webhook errors only; secrets and request bodies are not logged.
+
+## Business Brain boundary
+
+The onboarding completion write is now a protected state-changing route. It derives identity and organization from Clerk, checks local membership and `business.write`, validates with Zod, writes only the active organization inside a tenant transaction, and emits an audit event. Composite ownership constraints and forced RLS protect profile, goal, onboarding progress, and future Brain records. Provenance is recorded as `ONBOARDING`/`FACT`; missing values remain missing.
+
+**IMPLEMENTED:** server-backed profile/goal persistence, tenant-scoped Brain reads, audit coverage for onboarding completion, and CI RLS coverage for new Brain tables.
+
+**DEFERRED:** full CSRF token/origin policy for future browser mutations, per-entity editing services, generated recommendations/tasks, and production provider configuration.

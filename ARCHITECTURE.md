@@ -32,7 +32,9 @@ Every protected operation must derive the active organization from `auth()` and 
 - `/api/webhooks/clerk` verifies Clerk webhook signatures and idempotently synchronizes users, organizations, memberships, and deletions.
 - `/dashboard` is a protected product shell with organization switching.
 - `/onboarding` is a protected organization setup entry point. It does not invent business data or intelligence.
+- `src/lib/business-brain.ts` is the server-side boundary for validated onboarding persistence and tenant-scoped Brain reads.
+- `/api/private/onboarding` persists confirmed onboarding context only after authentication, membership, permission, ownership, RLS transaction setup, and audit logging.
 
 ## Deliberate boundaries
 
-The database schema currently includes only the foundation needed for identity, tenancy, authorization, business setup, and audit readiness. Intelligence, recommendations, tasks, agents, integrations, billing, and analytics remain later milestones.
+The Business Brain foundation now includes structured context, goals, provenance, and persistence boundaries for evidence-driven entities. It does not generate intelligence, recommendations, tasks, outcomes, agent actions, integrations, billing, or analytics. Those remain deferred; records with no real source are not created.

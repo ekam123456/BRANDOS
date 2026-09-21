@@ -13,8 +13,18 @@ export default function OnboardingFlow() {
   const [answers, setAnswers] = useState<Answers>({});
   const [questionIndex, setQuestionIndex] = useState(0);
   const [saved, setSaved] = useState(false);
+  const [persisting, setPersisting] = useState(false);
+  const [persistError, setPersistError] = useState<string>();
 
   useEffect(() => {
+    void fetch("/api/private/onboarding")
+      .then((response) => response.ok ? response.json() as Promise<{ progress?: { step: Step; draft: Answers } | null }> : null)
+      .then((serverState) => {
+        if (!serverState?.progress) return;
+        setStep(serverState.progress.step);
+        setAnswers(serverState.progress.draft);
+      })
+      .catch(() => undefined);
     const raw = window.localStorage.getItem("brandos-onboarding");
     if (!raw) return;
     try {
@@ -36,12 +46,38 @@ export default function OnboardingFlow() {
     setAnswers(nextAnswers);
     setQuestionIndex(nextIndex);
     window.localStorage.setItem("brandos-onboarding", JSON.stringify(draft));
+    void fetch("/api/private/onboarding", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ draft: { step: nextStep, answers: nextAnswers, questionIndex: nextIndex } }),
+    }).catch(() => undefined);
     setSaved(true);
     window.setTimeout(() => setSaved(false), 1600);
   }
 
   function updateAnswer(id: string, value: string) {
     setAnswers((current) => ({ ...current, [id]: value }));
+  }
+
+  async function confirmMap() {
+    setPersisting(true);
+    setPersistError(undefined);
+    try {
+      const response = await fetch("/api/private/onboarding", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ answers }),
+      });
+      if (!response.ok) {
+        const body = await response.json().catch(() => null) as { error?: string } | null;
+        throw new Error(body?.error ?? "Unable to save business context.");
+      }
+      save("connections");
+    } catch (error) {
+      setPersistError(error instanceof Error ? error.message : "Unable to save business context.");
+    } finally {
+      setPersisting(false);
+    }
   }
 
   if (step === "intro") return <OnboardingFrame current={1} total={8} title="A clearer way to run the business" description="BRANDOS first learns what matters to you, then turns that understanding into a focused path of meaningful work." saved={saved}>
@@ -63,7 +99,8 @@ export default function OnboardingFlow() {
 
   if (step === "map") return <OnboardingFrame current={4} total={8} title="Here’s what we understand so far" description="This is a draft, not a verdict. Correct anything that does not sound right." saved={saved}>
     <div className="map-summary">{mapRows(answers).map(([label, value]) => <div className="summary-row" key={label}><span>{label}</span><strong>{value || "Not provided yet"}</strong></div>)}</div>
-    <QuizActions back={() => save("quiz", answers, Math.max(questions.length - 1, 0))} next={() => save("connections")} nextLabel="Looks right — continue" />
+    {persistError ? <p className="form-error" role="alert">{persistError}</p> : null}
+    <QuizActions back={() => save("quiz", answers, Math.max(questions.length - 1, 0))} next={confirmMap} disabled={persisting} nextLabel={persisting ? "Saving…" : "Looks right — continue"} />
   </OnboardingFrame>;
 
   if (step === "connections") return <OnboardingFrame current={5} total={8} title="Now let’s connect your business" description="Connections can give BRANDOS real context later. Nothing is connected until you verify it yourself.">

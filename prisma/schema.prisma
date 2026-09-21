@@ -7,6 +7,34 @@ datasource db {
   provider = "postgresql"
 }
 
+enum KnowledgeType {
+  FACT
+  OBSERVATION
+  ASSUMPTION
+  HYPOTHESIS
+  DECISION
+  OUTCOME
+}
+
+enum SourceType {
+  USER
+  ONBOARDING
+  WEBSITE
+  INSTAGRAM
+  FACEBOOK
+  LINKEDIN
+  GOOGLE_ANALYTICS
+  GOOGLE_SEARCH_CONSOLE
+  GOOGLE_ADS
+  META_ADS
+  SHOPIFY
+  STRIPE
+  CRM
+  EMAIL
+  RESEARCH
+  SYSTEM
+}
+
 model UserAccount {
   id             String       @id
   email          String?
@@ -29,6 +57,17 @@ model Organization {
   goals          BusinessGoal[]
   brandConfig    BrandConfiguration?
   auditEvents    AuditEvent[]
+  onboardingProgress OnboardingProgress?
+  products       Product[]
+  services       Service[]
+  customerSegments CustomerSegment[]
+  competitors    Competitor[]
+  metrics        BusinessMetric[]
+  observations   Observation[]
+  problems       Problem[]
+  opportunities  Opportunity[]
+  recommendations Recommendation[]
+  tasks          Task[]
 }
 
 model Membership {
@@ -83,6 +122,16 @@ model Business {
   organization   Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   profile        BusinessProfile?
   goals          BusinessGoal[]
+  products       Product[]
+  services       Service[]
+  customerSegments CustomerSegment[]
+  competitors    Competitor[]
+  metrics        BusinessMetric[]
+  observations   Observation[]
+  problems       Problem[]
+  opportunities  Opportunity[]
+  recommendations Recommendation[]
+  tasks          Task[]
 
   @@unique([id, organizationId])
 }
@@ -94,6 +143,24 @@ model BusinessProfile {
   industry    String?
   description String?
   website     String?
+  category    String?
+  niche       String?
+  businessType String?
+  businessStage String?
+  location    String?
+  operatingMarket String?
+  businessModel String?
+  targetMarket String?
+  primaryChannels Json?
+  currentChallenges String?
+  resourcesContext String?
+  launchInformation String?
+  idea          String?
+  targetCustomer String?
+  problem       String?
+  proposedSolution String?
+  assumptions   String?
+  openQuestions String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   business    Business @relation(fields: [businessId, organizationId], references: [id, organizationId], onDelete: Cascade)
@@ -109,6 +176,16 @@ model BusinessGoal {
   organizationId String
   title       String
   description String?
+  goalType    String?
+  target      String?
+  timeframe   String?
+  priority    Int?
+  isPrimary   Boolean   @default(false)
+  sourceType  SourceType @default(ONBOARDING)
+  knowledgeType KnowledgeType @default(FACT)
+  problems      Problem[]
+  opportunities Opportunity[]
+  recommendations Recommendation[]
   status      String   @default("active")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
@@ -117,6 +194,265 @@ model BusinessGoal {
 
   @@index([businessId])
   @@index([organizationId])
+}
+
+model OnboardingProgress {
+  id             String   @id @default(cuid())
+  organizationId String   @unique
+  step           String
+  draft          Json
+  completedAt    DateTime?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  @@index([organizationId])
+}
+
+model Product {
+  id             String   @id @default(cuid())
+  organizationId String
+  businessId     String
+  name           String
+  description    String?
+  category       String?
+  price          String?
+  status         String?
+  sourceType     SourceType @default(USER)
+  knowledgeType  KnowledgeType @default(FACT)
+  sourceReference String?
+  collectedAt    DateTime?
+  freshness      String?
+  confidence     String?
+  business       Business @relation(fields: [businessId, organizationId], references: [id, organizationId], onDelete: Cascade)
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  @@index([organizationId])
+  @@index([businessId])
+}
+
+model Service {
+  id             String   @id @default(cuid())
+  organizationId String
+  businessId     String
+  name           String
+  description    String?
+  category       String?
+  price          String?
+  status         String?
+  sourceType     SourceType @default(USER)
+  knowledgeType  KnowledgeType @default(FACT)
+  sourceReference String?
+  collectedAt    DateTime?
+  freshness      String?
+  confidence     String?
+  business       Business @relation(fields: [businessId, organizationId], references: [id, organizationId], onDelete: Cascade)
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  @@index([organizationId])
+  @@index([businessId])
+}
+
+model CustomerSegment {
+  id             String   @id @default(cuid())
+  organizationId String
+  businessId     String
+  name           String
+  description    String?
+  needsProblems  String?
+  characteristics String?
+  acquisitionContext String?
+  priority       Int?
+  sourceType     SourceType @default(USER)
+  knowledgeType  KnowledgeType @default(FACT)
+  sourceReference String?
+  collectedAt    DateTime?
+  freshness      String?
+  confidence     String?
+  business       Business @relation(fields: [businessId, organizationId], references: [id, organizationId], onDelete: Cascade)
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  @@index([organizationId])
+  @@index([businessId])
+}
+
+model Competitor {
+  id             String   @id @default(cuid())
+  organizationId String
+  businessId     String
+  name           String
+  website        String?
+  description    String?
+  context        String?
+  sourceType     SourceType @default(USER)
+  knowledgeType  KnowledgeType @default(FACT)
+  sourceReference String?
+  collectedAt    DateTime?
+  freshness      String?
+  confidence     String?
+  business       Business @relation(fields: [businessId, organizationId], references: [id, organizationId], onDelete: Cascade)
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  @@index([organizationId])
+  @@index([businessId])
+}
+
+model BusinessMetric {
+  id             String   @id @default(cuid())
+  organizationId String
+  businessId     String
+  name           String
+  value          String?
+  unit           String?
+  period         String?
+  source         String?
+  measuredAt     DateTime?
+  freshness      String?
+  sourceType     SourceType @default(USER)
+  knowledgeType  KnowledgeType @default(FACT)
+  sourceReference String?
+  collectedAt    DateTime?
+  confidence     String?
+  business       Business @relation(fields: [businessId, organizationId], references: [id, organizationId], onDelete: Cascade)
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  @@index([organizationId])
+  @@index([businessId])
+}
+
+model Observation {
+  id             String   @id @default(cuid())
+  organizationId String
+  businessId     String
+  title          String
+  description    String?
+  evidence       String?
+  status         String?
+  sourceType     SourceType @default(USER)
+  knowledgeType  KnowledgeType @default(OBSERVATION)
+  sourceReference String?
+  collectedAt    DateTime?
+  freshness      String?
+  confidence     String?
+  business       Business @relation(fields: [businessId, organizationId], references: [id, organizationId], onDelete: Cascade)
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  problems       Problem[]
+  recommendations Recommendation[]
+  opportunities  Opportunity[]
+  @@index([organizationId])
+  @@index([businessId])
+}
+
+model Problem {
+  id             String   @id @default(cuid())
+  organizationId String
+  businessId     String
+  observationId  String?
+  goalId         String?
+  title          String
+  description    String?
+  evidence       String?
+  status         String?
+  confidence     String?
+  sourceType     SourceType @default(USER)
+  knowledgeType  KnowledgeType @default(OBSERVATION)
+  sourceReference String?
+  collectedAt    DateTime?
+  freshness      String?
+  business       Business @relation(fields: [businessId, organizationId], references: [id, organizationId], onDelete: Cascade)
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  observation    Observation? @relation(fields: [observationId], references: [id], onDelete: SetNull)
+  goal           BusinessGoal? @relation(fields: [goalId], references: [id], onDelete: SetNull)
+  opportunities  Opportunity[]
+  recommendations Recommendation[]
+  @@index([organizationId])
+  @@index([businessId])
+}
+
+model Opportunity {
+  id             String   @id @default(cuid())
+  organizationId String
+  businessId     String
+  observationId  String?
+  problemId      String?
+  goalId         String?
+  title          String
+  description    String?
+  evidence       String?
+  status         String?
+  confidence     String?
+  sourceType     SourceType @default(USER)
+  knowledgeType  KnowledgeType @default(HYPOTHESIS)
+  sourceReference String?
+  collectedAt    DateTime?
+  freshness      String?
+  business       Business @relation(fields: [businessId, organizationId], references: [id, organizationId], onDelete: Cascade)
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  observation    Observation? @relation(fields: [observationId], references: [id], onDelete: SetNull)
+  problem       Problem? @relation(fields: [problemId], references: [id], onDelete: SetNull)
+  goal          BusinessGoal? @relation(fields: [goalId], references: [id], onDelete: SetNull)
+  recommendations Recommendation[]
+  @@index([organizationId])
+  @@index([businessId])
+}
+
+model Recommendation {
+  id             String   @id @default(cuid())
+  organizationId String
+  businessId     String
+  observationId  String?
+  problemId      String?
+  opportunityId  String?
+  goalId         String?
+  title          String
+  description    String?
+  reason         String?
+  evidence       String?
+  expectedOutcome String?
+  status         String?
+  confidence     String?
+  approvalRequired Boolean @default(false)
+  sourceType     SourceType @default(SYSTEM)
+  knowledgeType  KnowledgeType @default(HYPOTHESIS)
+  sourceReference String?
+  collectedAt    DateTime?
+  freshness      String?
+  business       Business @relation(fields: [businessId, organizationId], references: [id, organizationId], onDelete: Cascade)
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  observation    Observation? @relation(fields: [observationId], references: [id], onDelete: SetNull)
+  problem       Problem? @relation(fields: [problemId], references: [id], onDelete: SetNull)
+  opportunity   Opportunity? @relation(fields: [opportunityId], references: [id], onDelete: SetNull)
+  goal          BusinessGoal? @relation(fields: [goalId], references: [id], onDelete: SetNull)
+  tasks         Task[]
+  @@index([organizationId])
+  @@index([businessId])
+}
+
+model Task {
+  id             String   @id @default(cuid())
+  organizationId String
+  businessId     String
+  recommendationId String?
+  title          String
+  description    String?
+  reason         String?
+  evidence       String?
+  impact         String?
+  effort         String?
+  urgency        String?
+  confidence     String?
+  ownerUserId    String?
+  deadline       DateTime?
+  expectedOutcome String?
+  approvalRequired Boolean @default(false)
+  status         String   @default("SUGGESTED")
+  completedAt    DateTime?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  sourceType     SourceType @default(SYSTEM)
+  knowledgeType  KnowledgeType @default(HYPOTHESIS)
+  sourceReference String?
+  collectedAt    DateTime?
+  freshness      String?
+  business       Business @relation(fields: [businessId, organizationId], references: [id, organizationId], onDelete: Cascade)
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  recommendation Recommendation? @relation(fields: [recommendationId], references: [id], onDelete: SetNull)
+  @@index([organizationId])
+  @@index([businessId])
 }
 
 model AuditEvent {

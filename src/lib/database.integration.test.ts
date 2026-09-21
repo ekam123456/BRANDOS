@@ -55,6 +55,51 @@ describeDatabase("PostgreSQL tenant isolation", () => {
     expect(visible.map((business) => business.id)).toEqual([businessA.id]);
   });
 
+  it("isolates Business Brain records and preserves onboarding provenance", async () => {
+    const brainA = await prisma.$transaction(async (tx) => {
+      await tx.$executeRaw`SELECT set_config('app.current_organization_id', ${organizationA}, true)`;
+      const business = await tx.business.findUniqueOrThrow({ where: { organizationId: organizationA } });
+      await tx.businessProfile.upsert({
+        where: { businessId: business.id },
+        update: { category: "saas" },
+        create: { businessId: business.id, organizationId: organizationA, category: "saas" },
+      });
+      await tx.businessGoal.create({
+        data: {
+          businessId: business.id,
+          organizationId: organizationA,
+          title: "Understand customer demand",
+          isPrimary: true,
+          sourceType: "ONBOARDING",
+          knowledgeType: "FACT",
+        },
+      });
+      return tx.product.create({
+        data: {
+          businessId: business.id,
+          organizationId: organizationA,
+          name: "Tenant A offer",
+          sourceType: "ONBOARDING",
+          knowledgeType: "FACT",
+        },
+      });
+    });
+    await prisma.$transaction(async (tx) => {
+      await tx.$executeRaw`SELECT set_config('app.current_organization_id', ${organizationB}, true)`;
+      const business = await tx.business.findUniqueOrThrow({ where: { organizationId: organizationB } });
+      await tx.product.create({ data: { businessId: business.id, organizationId: organizationB, name: "Tenant B offer" } });
+    });
+
+    const visible = await prisma.$transaction(async (tx) => {
+      await tx.$executeRaw`SELECT set_config('app.current_organization_id', ${organizationA}, true)`;
+      return tx.product.findMany();
+    });
+    expect(visible.map((product) => product.id)).toEqual([brainA.id]);
+    expect(visible[0].sourceType).toBe("ONBOARDING");
+    expect(visible[0].knowledgeType).toBe("FACT");
+    await expect(prisma.$transaction((tx) => tx.product.findMany())).resolves.toEqual([]);
+  });
+
   it("enforces membership removal, permission removal, and audit persistence", async () => {
     const permission = await prisma.permission.upsert({
       where: { key: "integration.read" },

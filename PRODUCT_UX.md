@@ -7,14 +7,15 @@
 - **Refined:** The quiz now uses an extensible question-definition catalog with distinct paths for restaurant, SaaS, e-commerce, local service, and new-business idea users. Questions are shown one at a time with category-aware progress, back/edit behavior, optional answers, and a draft-safe resume path.
 - **Refined:** Business Map summaries distinguish operating context from idea-mode assumptions and open questions.
 - **Implemented:** Responsive product primitives for page headers, empty states, status badges, choice cards, journey nodes, mission panels, and connection panels.
-- **Implemented:** Local draft persistence for onboarding so a user can pause and resume the experience in the same browser.
-- **Truthful boundary:** The onboarding draft is UX scaffolding only. It is not tenant database state and does not grant permissions or create business records.
+- **Implemented:** Local draft persistence for onboarding so a user can pause and resume the experience in the same browser, plus server persistence when the Business Map is confirmed.
+- **Implemented:** Business Map confirmation stores the user-supplied profile, primary goal, onboarding provenance, and completion state behind the existing authorization boundary.
+- **Truthful boundary:** An unfinished local draft remains browser-local until confirmation. Server persistence never invents missing fields, metrics, recommendations, tasks, or outcomes.
 
 ## Product truth
 
 The application intentionally does not fabricate business data, metrics, connections, intelligence, recommendations, journey progress, mission completion, or outcomes. Areas without verified data use explicit empty or waiting states and explain what is missing.
 
-The first-use experience is currently a client-side product prototype behind the existing protected route boundary. Persisting the quiz, Business Map, goal, journey, and mission to PostgreSQL requires a future server-side domain implementation with Clerk authorization, RLS-scoped transactions, validation, and audit events.
+The first-use experience is a protected client flow with a server-backed completion boundary. Journey and mission state are still waiting states; no personalized journey or work item is generated.
 
 ## Navigation model
 
