@@ -10,13 +10,10 @@ export const lifecycle = [
 
 export const navItems = [
   { label: "Product", href: "/product" },
-  { label: "How it works", href: "/how-it-works" },
-  { label: "Business Brain", href: "/business-brain" },
   { label: "Intelligence", href: "/intelligence" },
-  { label: "Agents", href: "/agents" },
-  { label: "Security", href: "/security" },
+  { label: "Use cases", href: "/use-cases" },
+  { label: "How it works", href: "/how-it-works" },
   { label: "Pricing", href: "/pricing" },
-  { label: "FAQ", href: "/faq" },
 ];
 
 export const plans = [

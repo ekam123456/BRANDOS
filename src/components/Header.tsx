@@ -24,7 +24,7 @@ export default function Header() {
         ))}
       </nav>
       <div className="header-actions">
-        <Link className="text-link desktop-only" href="/how-it-works">See how it works <span>↗</span></Link>
+        <Link className="text-link desktop-only" href="/contact">Talk to us <span>↗</span></Link>
         <Link className="button button-small" href="/contact">Start building <span>↗</span></Link>
       </div>
       <button className="menu-button" aria-label="Toggle menu" aria-expanded={open} onClick={() => setOpen(!open)}>
