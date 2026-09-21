@@ -108,7 +108,16 @@ export async function POST(request: NextRequest) {
     return new Response("ok", { status: 200 });
   } catch (error) {
     if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === "P2002") {
-      return new Response("ok", { status: 200 });
+      const eventId = request.headers.get("svix-id");
+      if (eventId) {
+        const processed = await getSystemPrisma().clerkWebhookEvent.findUnique({
+          where: { id: eventId },
+          select: { processedAt: true },
+        });
+        if (processed?.processedAt) {
+          return new Response("ok", { status: 200 });
+        }
+      }
     }
     console.error("Clerk webhook processing failed", error);
     return new Response("Invalid webhook or processing failure.", { status: 400 });

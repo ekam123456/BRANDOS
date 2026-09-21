@@ -1,5 +1,12 @@
 # BRANDOS security foundation
 
+## Status
+
+- **IMPLEMENTED:** Clerk middleware, server authorization, tenant transaction context, forced-RLS migration, webhook signature verification/idempotency, audit service, security headers, and CI checks.
+- **VERIFIED:** Static code review, schema validation, unit tests, build, and public HTTPS header inspection.
+- **DEPLOYMENT-GATED:** Real PostgreSQL RLS execution, Clerk production webhook signatures/retries, private API authorization against production configuration, and provider role/SSL settings.
+- **DEFERRED:** Rate limiting, backup/restore drills, agent permissions, integrations, billing controls, and business-data audit coverage.
+
 ## Authentication and authorization
 
 Clerk provides identity, sessions, sign-in, sign-up, and organization context. Clerk UI visibility is never treated as authorization. Server code checks the session and local BRANDOS membership before accessing protected data.
@@ -18,4 +25,6 @@ Clerk secret keys, webhook signing secrets, and database URLs are server-only en
 
 ## Required security tests
 
-The foundation includes pure cross-tenant rejection tests and an opt-in real PostgreSQL suite at `npm run test:integration`. The integration suite must run against an isolated `TEST_DATABASE_URL` before production database activation; it covers tenant filtering, missing context, membership removal, permission removal, and audit persistence. Cross-tenant access remains release-blocking.
+The foundation includes pure cross-tenant rejection tests and a real PostgreSQL suite at `npm run test:integration`. CI provisions PostgreSQL and a non-bypass-RLS role before running it. Cross-tenant access remains release-blocking.
+
+The current code has no SSRF-capable fetcher, no user-controlled raw SQL, no agent execution surface, and no business write route. CSRF risk is limited by the current read-only private route and Clerk’s session model; state-changing routes must add same-origin/CSRF protection before implementation. Error logs contain generic webhook errors only; secrets and request bodies are not logged.

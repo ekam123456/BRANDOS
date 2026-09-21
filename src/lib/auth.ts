@@ -2,7 +2,10 @@ import "server-only";
 import { auth } from "@clerk/nextjs/server";
 import { AuthorizationError } from "@/lib/tenant";
 
-export const isClerkConfigured = Boolean(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY);
+export const isClerkConfigured = Boolean(
+  process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
+  && (process.env.NODE_ENV !== "production" || process.env.CLERK_SECRET_KEY),
+);
 
 export async function requireAuthenticatedOrganization() {
   if (!isClerkConfigured) {

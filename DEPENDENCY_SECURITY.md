@@ -1,6 +1,6 @@
 # Dependency security review
 
-Reviewed 2026-09-22 against the installed lockfile and `npm audit`. No major-version migration was applied solely to make the audit output green.
+Reviewed 2026-09-21 against the installed lockfile, `npm audit`, and the current package versions. No major-version migration was applied solely to make the audit output green.
 
 | Advisory area | Package | Severity | Runtime | Exploitability and mitigation | Remediation |
 |---|---|---:|---|---|---|
@@ -10,3 +10,5 @@ Reviewed 2026-09-22 against the installed lockfile and `npm audit`. No major-ver
 | `@vitest/mocker` advisory | Vitest | Medium | Development/test only | Not shipped in the production bundle or runtime server. | Upgrade within the Vitest major when a compatible fix is available. Target: developer tooling maintenance. |
 
 `sharp` was updated by the prior non-breaking audit fix. Dependency advisories are not a substitute for application authorization, RLS deployment, or integration testing. Re-run `npm audit --omit=dev` and `npm audit` after each dependency update and inspect the actual advisory before changing major versions.
+
+CI runs `npm audit --audit-level=high` as an informational security check because the documented, accepted major-version advisories currently make a blocking audit unsuitable. A future dependency milestone must replace this with a clean, reviewed policy after compatibility testing.

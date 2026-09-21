@@ -2,6 +2,13 @@
 
 Review scope: Stage 2 foundation commit `2cc98f0`, subsequent review fixes, current branch state, and the deployed application architecture. No Business Brain or intelligence work was started.
 
+## Milestone 4 status
+
+- **IMPLEMENTED:** CI PostgreSQL service/test role, deployment configuration guidance, security-status documentation, and final tenant/query review.
+- **VERIFIED:** Local Prisma/lint/typecheck/unit/build checks, live public HTTPS/header inspection, branch/remote state, and CI workflow syntax by review.
+- **DEPLOYMENT-GATED:** Actual staging PostgreSQL migration/RLS execution and Clerk production webhook end-to-end behavior. No credentials or database provider access were available in this workspace.
+- **DEFERRED:** Product features, rate limiting, backup/restore drills, and major dependency migrations.
+
 ## Evidence checked
 
 - Clerk provider, middleware, sign-in/sign-up routes, organization switcher, `auth()` usage, and protected routes.
@@ -10,6 +17,8 @@ Review scope: Stage 2 foundation commit `2cc98f0`, subsequent review fixes, curr
 - Prisma 7 configuration, PostgreSQL adapter/client lifecycle, schema, migration, generated-client build behavior, and environment variable handling.
 - Production headers, Vercel build behavior, public/protected route behavior, dependency audit output, Git history, branch, remote, and pushed commit.
 - Pure tenant-isolation tests and the complete local quality suite.
+- Direct search of all application Prisma access, raw SQL, request organization inputs, system database usage, and live Vercel response headers.
+- Production authentication configuration is fail-closed when either Clerk key is absent.
 
 ## Findings fixed during review
 
@@ -53,9 +62,9 @@ The hardening migration enables forced RLS and the application now uses transact
 
 The reusable audit service is implemented and Clerk organization/membership synchronization emits events. Future business, agent, automation, approval, integration, and billing/security actions must call the service through audited domain services before those features are introduced.
 
-### LOW — CSP is environment-dependent by design
+### LOW — deployed CSP/frame headers not verified on current live revision
 
-Clerk middleware now supplies its strict nonce-aware CSP when Clerk is configured. The public no-Clerk build receives a separate baseline CSP from `next.config.ts`; production must verify the Clerk CSP and required domains in the deployed environment.
+Clerk middleware now supplies its strict nonce-aware CSP when Clerk is configured. The inspected live Vercel revision returned no `Content-Security-Policy` or `X-Frame-Options`, so the current deployment must be redeployed and rechecked before relying on those controls.
 
 ### LOW — deployment configuration is not activated
 

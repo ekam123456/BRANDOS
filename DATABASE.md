@@ -2,6 +2,13 @@
 
 BRANDOS uses PostgreSQL as the source of truth for application and business data and Prisma ORM 7 for typed access and migrations.
 
+## Status
+
+- **IMPLEMENTED:** Prisma 7 PostgreSQL adapter, migrations, forced-RLS policies, tenant transaction helper, and CI PostgreSQL service.
+- **VERIFIED:** Schema validation, client generation, migration SQL review, and unit/build checks.
+- **DEPLOYMENT-GATED:** Applying the hardening migration to a real staging database and executing integration tests with a non-superuser/non-BYPASSRLS role.
+- **DEFERRED:** Production backup/restore execution, connection pool sizing, and provider-specific failover testing.
+
 ## Connection policy
 
 - `DATABASE_URL` is the pooled runtime connection.
@@ -38,3 +45,5 @@ TEST_DATABASE_URL='postgresql://...' npm run test:integration
 ```
 
 The integration suite is intentionally skipped, with no success claim, when `TEST_DATABASE_URL` is absent. Docker is not required by the repository, but the configured test URL must point to an isolated PostgreSQL database.
+
+The CI workflow is the currently supported disposable environment: PostgreSQL 16 runs as a GitHub Actions service, migrations run as the database administrator, and tests connect through a separately created `NOSUPERUSER NOBYPASSRLS` role. Never point `TEST_DATABASE_URL` at production or a shared database.
