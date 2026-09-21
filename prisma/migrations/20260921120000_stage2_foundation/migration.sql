@@ -39,6 +39,7 @@ CREATE TABLE "RolePermission" (
 );
 
 CREATE TABLE "Membership" (
+    "organizationId" TEXT NOT NULL,
     "userId" TEXT NOT NULL,
     "roleId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -48,6 +49,7 @@ CREATE TABLE "Membership" (
 
 CREATE TABLE "Business" (
     "id" TEXT NOT NULL,
+    "organizationId" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -57,7 +59,6 @@ CREATE TABLE "Business" (
 CREATE TABLE "BusinessProfile" (
     "id" TEXT NOT NULL,
     "businessId" TEXT NOT NULL,
-    "organizationId" TEXT NOT NULL,
     "industry" TEXT,
     "description" TEXT,
     "website" TEXT,
@@ -69,7 +70,6 @@ CREATE TABLE "BusinessProfile" (
 CREATE TABLE "BusinessGoal" (
     "id" TEXT NOT NULL,
     "businessId" TEXT NOT NULL,
-    "organizationId" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "description" TEXT,
     "status" TEXT NOT NULL DEFAULT 'active',
