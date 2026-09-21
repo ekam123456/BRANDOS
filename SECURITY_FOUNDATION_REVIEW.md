@@ -45,21 +45,17 @@ The API previously checked Clerk authentication and an active organization but d
 
 ## Remaining risks and gaps
 
-### MEDIUM — database authorization is application-enforced only
+### MEDIUM — RLS and integration proof are deployment-gated
 
-PostgreSQL row-level security is not enabled. Tenant isolation currently depends on every future service/query using the verified organization context. This is acceptable for the foundation only while the database has no broad business-data API; RLS or an equivalent defense-in-depth policy should be evaluated before high-value records are exposed.
+The hardening migration enables forced RLS and the application now uses transaction-local tenant context. The migration has not been applied to a real database in this environment, and `TEST_DATABASE_URL` was not configured, so the PostgreSQL isolation tests were skipped. Production activation must apply the migration with a non-`BYPASSRLS` runtime role and run `npm run test:integration`.
 
-### MEDIUM — webhook synchronization needs database integration tests
+### LOW — audit coverage is foundational, not complete
 
-The repository has pure cross-tenant tests, but no disposable-PostgreSQL tests for webhook retries, concurrent delivery, membership revocation, or query scoping. These are required before production authentication/database activation.
+The reusable audit service is implemented and Clerk organization/membership synchronization emits events. Future business, agent, automation, approval, integration, and billing/security actions must call the service through audited domain services before those features are introduced.
 
-### MEDIUM — audit events are schema-ready but not emitted
+### LOW — CSP is environment-dependent by design
 
-`AuditEvent` exists, but the current foundation does not write audit events for authorization or organization changes. Business writes must go through an audited domain service before they are introduced.
-
-### LOW — no Content-Security-Policy
-
-Security headers include `X-Content-Type-Options`, referrer policy, and permissions policy. A CSP is not configured. Add one after Clerk asset and font requirements are finalized; do not add a broken restrictive policy blindly.
+Clerk middleware now supplies its strict nonce-aware CSP when Clerk is configured. The public no-Clerk build receives a separate baseline CSP from `next.config.ts`; production must verify the Clerk CSP and required domains in the deployed environment.
 
 ### LOW — deployment configuration is not activated
 
@@ -99,8 +95,8 @@ NEXT_PUBLIC_CLERK_SIGN_UP_FALLBACK_REDIRECT_URL
 2. Configure Vercel environment variables without committing secrets.
 3. Provision PostgreSQL with TLS and a restricted runtime role.
 4. Run `npm run db:deploy` from a trusted migration job using `DIRECT_URL`.
-5. Add PostgreSQL integration tests for tenant scoping, membership revocation, webhook retry/idempotency, and all private APIs.
+5. Set `TEST_DATABASE_URL`, apply migrations to an isolated database, and run the real PostgreSQL integration suite.
 6. Add audited domain services before creating or mutating business data.
-7. Re-evaluate RLS and CSP before exposing sensitive Business Brain records.
+7. Verify deployed Clerk CSP behavior and database role privileges before exposing sensitive records.
 
 Milestone 3 implements the hardening migration, tenant transaction helper, opt-in PostgreSQL integration tests, reusable audit service, Clerk-compatible CSP middleware, and dependency advisory inventory. RLS is not considered deployed until the migration is applied on the target database and the integration suite passes against that database.
