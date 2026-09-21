@@ -8,13 +8,24 @@ export const lifecycle = [
   ["07", "Learn", "Use outcomes to make the next recommendation sharper."],
 ];
 
-export const navItems = ["Product", "How it works", "For businesses", "Security", "Pricing"];
+export const navItems = [
+  { label: "Product", href: "/product" },
+  { label: "How it works", href: "/how-it-works" },
+  { label: "Business Brain", href: "/business-brain" },
+  { label: "Intelligence", href: "/intelligence" },
+  { label: "Agents", href: "/agents" },
+  { label: "Security", href: "/security" },
+  { label: "Pricing", href: "/pricing" },
+  { label: "FAQ", href: "/faq" },
+];
+
 export const plans = [
   { name: "Starter", description: "A clear place to begin understanding your business.", price: "Configurable", items: ["Business foundation", "Core context", "Guided priorities"] },
   { name: "Growth", description: "For teams ready to connect decisions to execution.", price: "Configurable", items: ["Everything in Starter", "Intelligence workflows", "Approval controls"] },
   { name: "Scale", description: "A deeper operating layer for growing complexity.", price: "Configurable", items: ["Everything in Growth", "More agents and roles", "Advanced memory"] },
   { name: "Enterprise", description: "Designed around your security and operating model.", price: "Let’s talk", items: ["Custom architecture", "Granular governance", "Dedicated support"] },
 ];
+
 export const faqs = [
   ["What is a Business Operating System?", "It is a connected operating layer for a business: it brings context, signals, decisions and execution into one coherent loop instead of leaving each tool in isolation."],
   ["What is the Business Brain?", "The Business Brain is the structured, contextual understanding of a company—its products, customers, goals, operations, history and outcomes. It gives intelligence something meaningful to reason about."],
@@ -23,4 +34,6 @@ export const faqs = [
   ["Can I control what AI can do?", "Yes. The intended model is permissioned autonomy: capabilities, tools, approvals and audit trails define what an agent can and cannot do."],
   ["What integrations will be supported?", "The architecture is intended to connect analytics, marketing, commerce, payments, communication, CRM and work tools over time. Availability will be made clear as each connection is built."],
   ["Can I start with a new business?", "Yes. A business can start with its goals, offer, customers and operating assumptions, then let the Business Brain become richer as evidence accumulates."],
+  ["How does autonomy work?", "Autonomy follows a governance model: Manual, Assisted, Auto, and Autopilot each define how much the system may act with or without a human approval step."],
+  ["What happens when the system is uncertain?", "It should surface the uncertainty, explain what evidence exists, and recommend a next step instead of pretending certainty where none exists."],
 ];

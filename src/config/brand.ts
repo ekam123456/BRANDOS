@@ -4,10 +4,10 @@ export const brandConfiguration = {
   name: "BRANDOS",
   logo: "BRANDOS",
   favicon: "/favicon.svg",
-  colors: { ink: "#15221e", paper: "#f7f8f4", accent: "#b8ef72", muted: "#68756f" },
-  typography: { display: "DM Sans", body: "DM Sans" },
+  colors: { ink: "#101b1d", paper: "#f6f2eb", accent: "#9ec7b5", accentStrong: "#607f78", muted: "#586c6f" },
+  typography: { display: "Manrope", body: "Manrope" },
   domain: process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
-  emailIdentity: "hello@example.com",
+  emailIdentity: "hello@brandos.example",
   featureFlags: { waitlist: true, authenticatedApp: false },
 } as const;
 

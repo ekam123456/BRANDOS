@@ -1,28 +1,319 @@
-import Header from "@/components/Header";
-import FAQ from "@/components/FAQ";
-import { Arrow, FeatureCard, Lifecycle, SectionLabel } from "@/components/SectionParts";
+import Link from "next/link";
+import { PageShell } from "@/components/PageFrame";
 import { plans } from "@/data/content";
 
 export default function Home() {
-  return <main id="top"><Header />
-    <section className="hero container"><div className="hero-copy"><SectionLabel>The business operating system</SectionLabel><h1>Your business has a lot of data.<br /><em>Your business needs a brain.</em></h1><p className="hero-lede">BRANDOS turns scattered business information into a living understanding of your company—then helps you decide what matters and what to do next.</p><div className="hero-actions"><a className="button" href="#start">Start building your business <Arrow /></a><a className="play-link" href="#how-it-works"><span className="play">▶</span> See how it works</a></div></div><div className="hero-orbit" aria-label="Conceptual visualization of a business brain"><div className="orbit orbit-one" /><div className="orbit orbit-two" /><div className="core"><span>Business</span><strong>Brain</strong></div><span className="orbit-label label-top">context</span><span className="orbit-label label-right">decisions</span><span className="orbit-label label-bottom">outcomes</span><span className="orbit-label label-left">signals</span></div></section>
-    <div className="ticker"><div className="container ticker-inner"><span>One connected loop</span><span>Understand</span><span>Diagnose</span><span>Prioritize</span><span>Recommend</span><span>Execute</span><span>Learn</span></div></div>
-    <section className="section problem container" id="product"><div className="section-intro"><SectionLabel>The fragmentation problem</SectionLabel><h2>The hard part isn’t finding more data. <em>It’s knowing what it means.</em></h2></div><div className="split-copy"><p>Analytics, CRM, payments, marketing, operations and conversations each tell a small part of the story. Your business lives in the gaps between them.</p><p>Traditional dashboards give you more things to look at. BRANDOS is designed to help you understand the whole—and make the next decision with context.</p></div><div className="fragment-grid">{["Analytics", "Sales & CRM", "Marketing", "Operations", "Customers", "Finance", "Team", "Documents"].map((x, i) => <div className="fragment" key={x}><span>0{i + 1}</span>{x}</div>)}</div></section>
-    <section className="section dark-section" id="how-it-works"><div className="container"><div className="section-intro"><SectionLabel>How it works</SectionLabel><h2>A system that gets smarter <em>with every loop.</em></h2><p className="intro-text">From first context to measurable outcome, the intelligence loop connects understanding to action without hiding the reasoning in between.</p></div><Lifecycle /></div></section>
-    <section className="section brain-section container" id="business-brain"><div className="brain-visual"><div className="brain-ring ring-a" /><div className="brain-ring ring-b" /><div className="brain-center">The<br /><strong>Business<br />Brain</strong></div><span className="node node-a">Goals</span><span className="node node-b">Customers</span><span className="node node-c">Decisions</span><span className="node node-d">Operations</span></div><div className="brain-copy"><SectionLabel>A contextual layer</SectionLabel><h2>Not just a database. <em>Understanding.</em></h2><p>The Business Brain is a structured picture of how your business works: its products, customers, market, goals, performance, decisions and outcomes.</p><p>It gives the intelligence engine context—so a signal can become an informed recommendation instead of another disconnected notification.</p><a className="inline-link" href="#business-intelligence">Explore the intelligence model <Arrow /></a></div></section>
-    <section className="section intelligence" id="business-intelligence"><div className="container"><div className="section-intro centered"><SectionLabel>From signal to outcome</SectionLabel><h2>Make the meaning <em>visible.</em></h2><p className="intro-text">A clear progression from what happened to what changed because you acted.</p></div><div className="progression">{[["01","Data","What happened."],["02","Observation","What changed."],["03","Problem","What needs attention."],["04","Opportunity","Where value may exist."],["05","Recommendation","What could be done."],["06","Action","What gets executed."],["07","Outcome","What happened next."]].map(([n,t,d]) => <div className="progress-item" key={n}><span>{n}</span><h3>{t}</h3><p>{d}</p></div>)}</div></div></section>
-    <section className="section matters container" id="recommendations"><div className="matter-copy"><SectionLabel>A calmer operating rhythm</SectionLabel><h2>Know what matters <em>now.</em></h2><p>Instead of asking you to monitor hundreds of metrics, the system is designed to surface the few things that deserve attention—and show its reasoning.</p><a className="inline-link" href="#start">See the product concept <Arrow /></a></div><div className="concept-panel"><div className="panel-top"><span>Illustrative workspace</span><span>Today · 09:41</span></div><h3>Good morning.</h3><p>Here’s what matters today.</p><div className="attention"><strong>1</strong><span>thing needs attention</span><b>→</b></div><div className="attention"><strong>3</strong><span>high-impact actions</span><b>→</b></div><div className="attention handled"><strong>2</strong><span>things the system handled</span><b>✓</b></div><small>Illustrative experience. No real business data shown.</small></div></section>
-    <section className="section dark-section" id="execution"><div className="container execution"><div><SectionLabel>From decision to doing</SectionLabel><h2>Recommendations are only useful when they <em>move.</em></h2><p className="intro-text">Turn a recommendation into prepared work, an approval, an execution and a measurable result. Keep the human in the loop wherever the business requires it.</p></div><div className="execution-flow">{["Recommendation","Task","Preparation","Approval","Execution","Verification","Measurement"].map((x,i) => <div key={x}><span>0{i+1}</span>{x}{i < 6 && <b>→</b>}</div>)}</div></div></section>
-    <section className="section agents container" id="ai-agents"><div className="section-intro"><SectionLabel>Controlled workers</SectionLabel><h2>Agents that work <em>inside the system.</em></h2><p className="intro-text">Research, marketing, content, sales, analytics, operations and support agents are not independent chatbots. They are defined workers with capabilities, tools, permissions and audit trails.</p></div><div className="agent-grid">{["Research", "Marketing", "Sales", "Analytics", "Operations", "Customer support"].map((x,i) => <FeatureCard key={x} number={`0${i+1}`} title={x}>A focused capability that can prepare work, explain its evidence and operate within an explicit boundary.</FeatureCard>)}</div></section>
-    <section className="section autonomy" id="security"><div className="container"><div className="section-intro centered"><SectionLabel>Permissioned autonomy</SectionLabel><h2>You choose how much <em>the system does.</em></h2></div><div className="autonomy-grid">{[["Manual","The system tells you what to do."],["Assisted","It prepares the work; you approve it."],["Auto","Predefined actions run within permission."],["Autopilot","Goals are pursued inside strict boundaries."]].map(([t,d],i) => <div className={`autonomy-item ${i===1 ? "selected" : ""}`} key={t}><span>0{i+1}</span><h3>{t}</h3><p>{d}</p></div>)}</div><p className="security-note">Permissions, approval rules, secure credentials and audit trails are part of the architecture—not an afterthought.</p></div></section>
-    <section className="section memory container"><div className="memory-copy"><SectionLabel>Continuity over time</SectionLabel><h2>A business that <em>remembers.</em></h2><p>Business Memory, Customer Memory, Operational Memory, Decision Memory and Outcome Memory give the system continuity. Facts should carry provenance, freshness and confidence—not just a timestamp.</p></div><div className="memory-list">{["Business memory","Customer memory","Operational memory","Decision memory","Outcome memory"].map((x,i) => <div key={x}><span>0{i+1}</span>{x}<b>↗</b></div>)}</div></section>
-    <section className="section integrations" id="integrations"><div className="container"><div className="section-intro centered"><SectionLabel>A connected future</SectionLabel><h2>Your business, in <em>one context.</em></h2><p className="intro-text">Planned architectural capabilities include analytics, commerce, payments, communication, CRM and work tools. Connections will be clearly marked as they become available.</p></div><div className="integration-cloud">{["Google Analytics","Google Ads","Meta","Instagram","Shopify","Stripe","Slack","Google Workspace","CRM","Email","WhatsApp","Website"].map(x => <span key={x}>{x}</span>)}</div><p className="planned">Planned / architectural capability · Not connected</p></div></section>
-    <section className="section health container"><div className="health-copy"><SectionLabel>A wider view</SectionLabel><h2>Business health with a <em>reason behind it.</em></h2><p>Revenue, sales, marketing, operations, brand and retention—each area should be understandable, not reduced to a mysterious score. See why something looks healthy, weak, changing or uncertain.</p></div><div className="health-lines">{["Revenue","Sales","Marketing","Operations","Brand","Retention"].map((x,i) => <div key={x}><span>{x}</span><i><b style={{width: `${35 + i*9}%`}} /></i><small>{i % 2 ? "Changing" : "Context needed"}</small></div>)}</div></section>
-    <section className="section difference" id="for-businesses"><div className="container"><div className="section-intro centered"><SectionLabel>Why this is different</SectionLabel><h2>Not another tool. <em>A different center of gravity.</em></h2></div><div className="difference-grid">{[["Analytics tools","Show what happened."],["Project management","Organize assigned work."],["CRMs","Manage relationships."],["AI chatbots","Answer prompts."],["Automation tools","Connect triggers and actions."],["A Business OS","Connect understanding, decisions and execution around the business."]].map(([t,d],i) => <div className={i===5 ? "diff-card highlighted" : "diff-card"} key={t}><span>{String(i+1).padStart(2,"0")}</span><h3>{t}</h3><p>{d}</p></div>)}</div></div></section>
-    <section className="section use-cases container"><div className="section-intro"><SectionLabel>Built around the business</SectionLabel><h2>Different businesses. <em>Same need for clarity.</em></h2></div><div className="use-grid">{[["Startup","Turn early signals, assumptions and goals into a focused operating rhythm."],["Ecommerce","Connect demand, customers, margin and marketing into the next best move."],["Local business","Bring daily operations and customer context into one calmer view."],["Service business","Understand capacity, pipeline, delivery and retention together."],["Agency","Keep client context, delivery decisions and outcomes connected."],["Growing company","Coordinate more complexity without losing the why behind the work."]].map(([t,d]) => <article key={t}><h3>{t}</h3><p>{d}</p><Arrow /></article>)}</div></section>
-    <section className="section pricing" id="pricing"><div className="container"><div className="section-intro centered"><SectionLabel>Pricing architecture</SectionLabel><h2>Start with the context you need. <em>Grow from there.</em></h2><p className="intro-text">Plans are intentionally configurable while the product is being shaped. No invented prices, usage claims or locked-in promises.</p></div><div className="plans">{plans.map((p,i) => <article className={i===1 ? "plan featured" : "plan"} key={p.name}><span className="plan-label">{i===1 ? "Most flexible" : `0${i+1}`}</span><h3>{p.name}</h3><p>{p.description}</p><strong>{p.price}</strong><ul>{p.items.map(x => <li key={x}>✓ {x}</li>)}</ul><a href="#start">Learn about {p.name} <Arrow /></a></article>)}</div></div></section>
-    <section className="section faq container" id="faq"><div className="section-intro"><SectionLabel>Questions, answered</SectionLabel><h2>Clarity before <em>commitment.</em></h2></div><FAQ /></section>
-    <section className="final-cta" id="start"><div className="container"><SectionLabel>Open your business</SectionLabel><h2>Stop managing disconnected tools.<br /><em>Start operating from one system.</em></h2><p>The public concept is taking shape. Build a clearer relationship with the business you are building.</p><a className="button button-light" href="mailto:hello@example.com?subject=Start%20building%20my%20business">Start building your business <Arrow /></a></div></section>
-    <footer className="footer"><div className="container footer-top"><a className="brand" href="#top"><span className="mark">B<span>·</span></span><span>BRANDOS</span></a><p>A calmer way to understand<br />what matters next.</p><div className="footer-links"><div><b>Explore</b><a href="#product">Product</a><a href="#how-it-works">How it works</a><a href="#for-businesses">Use cases</a><a href="#pricing">Pricing</a></div><div><b>Trust</b><a href="#security">Security</a><a href="#faq">FAQ</a><a href="mailto:hello@example.com">Contact</a></div><div><b>Company</b><a href="#top">About</a><a href="mailto:hello@example.com">hello@example.com</a></div></div></div><div className="container footer-bottom"><span>© 2026 BRANDOS. Product concept in development.</span><span><a href="#security">Privacy</a> · <a href="#security">Terms</a> · <a href="#security">Security</a> · <a href="#top">Status</a></span></div></footer>
-  </main>;
+  return (
+    <PageShell>
+      <section className="hero container">
+        <div className="hero-copy">
+          <p className="kicker">Business operating system</p>
+          <h1>
+            The operating layer that turns scattered signals into business clarity.
+          </h1>
+          <p className="hero-lede">
+            BRANDOS creates a living model of the business so teams can understand what is changing, why it matters,
+            and what deserves action next—without the noise of disconnected tools and fragmented dashboards.
+          </p>
+          <div className="hero-actions">
+            <Link className="button" href="/contact">Start building</Link>
+            <Link className="button secondary" href="/how-it-works">Explore how it works</Link>
+          </div>
+          <div className="hero-metrics" aria-label="BRANDOS concept summary">
+            <div>
+              <strong>One</strong>
+              <span>operating picture</span>
+            </div>
+            <div>
+              <strong>Context</strong>
+              <span>before action</span>
+            </div>
+            <div>
+              <strong>Clear</strong>
+              <span>next steps</span>
+            </div>
+          </div>
+        </div>
+
+        <div className="hero-visual" aria-label="Signals to context to decisions to outcomes">
+          <div className="signal signal-a">Signals</div>
+          <div className="signal signal-b">Context</div>
+          <div className="signal signal-c">Decisions</div>
+          <div className="signal signal-d">Outcomes</div>
+          <div className="brain-core">
+            <span>Business</span>
+            <strong>Brain</strong>
+          </div>
+        </div>
+      </section>
+
+      <div className="ticker">
+        <div className="container ticker-inner">
+          <span>One connected loop</span>
+          <span>Understand</span>
+          <span>Diagnose</span>
+          <span>Prioritize</span>
+          <span>Recommend</span>
+          <span>Execute</span>
+          <span>Learn</span>
+        </div>
+      </div>
+
+      <section className="section container">
+        <div className="section-header split">
+          <div>
+            <p className="kicker">The fragmentation problem</p>
+            <h2>Most businesses aren’t short on information. They’re short on clarity.</h2>
+          </div>
+          <p>
+            Marketing, sales, operations, finance, customer conversations, and website activity each tell a different story.
+            The real challenge is not collecting more data—it is understanding what is changing, what it means, and what matters now.
+          </p>
+        </div>
+        <div className="chips-grid">
+          {[
+            "Analytics",
+            "Sales & CRM",
+            "Marketing",
+            "Customer data",
+            "Operations",
+            "Revenue",
+            "Team decisions",
+            "Documents",
+          ].map((item) => (
+            <span key={item} className="chip">
+              {item}
+            </span>
+          ))}
+        </div>
+      </section>
+
+      <section className="section section-alt">
+        <div className="container">
+          <div className="section-header centered narrow">
+            <p className="kicker">The missing layer</p>
+            <h2>BRANDOS connects the business into one coherent operating picture.</h2>
+          </div>
+          <div className="flow-grid">
+            {[
+              ["Data", "Signals and records from the business"],
+              ["Context", "A structured model of how the business works"],
+              ["Intelligence", "Patterns, problems and opportunity"],
+              ["Decisions", "What matters now and why"],
+              ["Execution", "Prepared, approved and trackable work"],
+              ["Outcomes", "What changes after the action"],
+            ].map(([title, copy]) => (
+              <div key={title} className="flow-card">
+                <span>{title}</span>
+                <p>{copy}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="section container">
+        <div className="section-header centered narrow">
+          <p className="kicker">Business Brain</p>
+          <h2>A contextual operating model, not just a database.</h2>
+        </div>
+        <div className="story-grid two-up">
+          <div className="story-panel">
+            <h3>What the Business Brain understands</h3>
+            <ul className="bullet-list">
+              <li>Products and services</li>
+              <li>Customers and segments</li>
+              <li>Goals, performance and constraints</li>
+              <li>Operations, sales and team dynamics</li>
+              <li>Past decisions and their outcomes</li>
+            </ul>
+          </div>
+          <div className="story-panel emphasis">
+            <h3>Why it matters</h3>
+            <p>
+              A sales dip is not just a number. It gains meaning when it connects to pricing, customer segments, marketing,
+              product mix and historical decisions.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section className="section section-alt">
+        <div className="container">
+          <div className="section-header centered narrow">
+            <p className="kicker">Intelligence</p>
+            <h2>From raw information to action.</h2>
+          </div>
+          <div className="timeline">
+            {[
+              ["Data", "What happened."],
+              ["Observation", "What changed or appears unusual."],
+              ["Problem / opportunity", "Where attention may be needed."],
+              ["Recommendation", "What could be done and why."],
+              ["Action", "What gets executed and by whom."],
+              ["Outcome", "What changed after the action."],
+            ].map(([title, text]) => (
+              <div key={title} className="timeline-item">
+                <span>{title}</span>
+                <p>{text}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="section container">
+        <div className="section-header two-up">
+          <div>
+            <p className="kicker">What matters now</p>
+            <h2>Design for focus, not overload.</h2>
+          </div>
+          <p>
+            Instead of surfacing hundreds of metrics, BRANDOS is designed to highlight the few things that deserve attention now,
+            with the reasoning behind them.
+          </p>
+        </div>
+        <div className="signal-panel">
+          <div className="signal-topline">
+            <span>Illustrative workspace</span>
+            <span>Today · 09:41</span>
+          </div>
+          <h3>Good morning.</h3>
+          <p>Here’s what matters today.</p>
+          <div className="signal-row">
+            <strong>1</strong>
+            <span>thing needs attention</span>
+          </div>
+          <div className="signal-row">
+            <strong>3</strong>
+            <span>high-impact actions</span>
+          </div>
+          <div className="signal-row muted">
+            <strong>2</strong>
+            <span>things the system handled</span>
+          </div>
+          <small>Illustrative experience. No real business data shown.</small>
+        </div>
+      </section>
+
+      <section className="section section-alt">
+        <div className="container">
+          <div className="section-header centered narrow">
+            <p className="kicker">Agents and execution</p>
+            <h2>Recommendations move into action with controls.</h2>
+          </div>
+          <div className="mini-flow">
+            {[
+              "Recommendation",
+              "Task",
+              "Preparation",
+              "Approval",
+              "Execution",
+              "Verification",
+              "Measurement",
+            ].map((item) => (
+              <span key={item}>{item}</span>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="section container">
+        <div className="section-header centered narrow">
+          <p className="kicker">Autonomy</p>
+          <h2>Human control stays visible.</h2>
+        </div>
+        <div className="autonomy-grid">
+          {[
+            ["Manual", "The system tells you what to do."],
+            ["Assisted", "It prepares the work and awaits approval."],
+            ["Auto", "Predefined actions can run within permissions."],
+            ["Autopilot", "The system works toward goals inside boundaries."],
+          ].map(([label, text], index) => (
+            <div key={label} className={index === 1 ? "autonomy-card selected" : "autonomy-card"}>
+              <span>{String(index + 1).padStart(2, "0")}</span>
+              <h3>{label}</h3>
+              <p>{text}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="section section-alt">
+        <div className="container">
+          <div className="section-header centered narrow">
+            <p className="kicker">Trust</p>
+            <h2>Security is a product feature, not a checkbox.</h2>
+          </div>
+          <div className="trust-grid">
+            {[
+              "Tenant isolation",
+              "Granular permissions",
+              "Approval controls",
+              "Audit trails",
+              "Secure credentials",
+              "Least privilege",
+            ].map((item) => (
+              <div key={item} className="trust-card">
+                {item}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="section container">
+        <div className="section-header centered narrow">
+          <p className="kicker">Business contexts</p>
+          <h2>Built to support different kinds of work.</h2>
+        </div>
+        <div className="usecase-grid">
+          {[
+            ["Startup", "Turn goals, assumptions and early traction into a clear operating rhythm."],
+            ["Ecommerce", "Connect demand, margin, marketing and conversion into the next best move."],
+            ["Local business", "Bring operations, customer context and daily decisions into one view."],
+            ["Service business", "Understand capacity, delivery and retention together."],
+            ["Agency", "Keep client context, delivery decisions and outcomes connected."],
+            ["Growing company", "Coordinate complexity without losing the reasons behind the work."],
+          ].map(([title, text]) => (
+            <article key={title} className="usecase-card">
+              <h3>{title}</h3>
+              <p>{text}</p>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="section section-alt pricing-preview">
+        <div className="container">
+          <div className="section-header centered narrow">
+            <p className="kicker">Pricing</p>
+            <h2>Start with the context you need. Grow from there.</h2>
+          </div>
+          <div className="plans-grid">
+            {plans.map((plan) => (
+              <article key={plan.name} className="plan-card">
+                <span>{plan.name}</span>
+                <h3>{plan.price}</h3>
+                <p>{plan.description}</p>
+                <ul>
+                  {plan.items.map((item) => (
+                    <li key={item}>{item}</li>
+                  ))}
+                </ul>
+              </article>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="final-cta">
+        <div className="container narrow centered">
+          <p className="kicker">Open your business</p>
+          <h2>Stop managing disconnected tools. Start operating from one system.</h2>
+          <Link className="button button-light" href="/contact">Start building</Link>
+        </div>
+      </section>
+    </PageShell>
+  );
 }
