@@ -4,6 +4,8 @@
 
 - **Implemented:** An authenticated product shell with Today, Business Brain, Intelligence, Journey, Work, Automations, Analytics, Connections, and Settings navigation.
 - **Implemented:** A resumable first-use flow covering product introduction, adaptive business discovery, Business Map confirmation, connection setup, primary goal, truthful plan-building state, journey preview, and first mission state.
+- **Refined:** The quiz now uses an extensible question-definition catalog with distinct paths for restaurant, SaaS, e-commerce, local service, and new-business idea users. Questions are shown one at a time with category-aware progress, back/edit behavior, optional answers, and a draft-safe resume path.
+- **Refined:** Business Map summaries distinguish operating context from idea-mode assumptions and open questions.
 - **Implemented:** Responsive product primitives for page headers, empty states, status badges, choice cards, journey nodes, mission panels, and connection panels.
 - **Implemented:** Local draft persistence for onboarding so a user can pause and resume the experience in the same browser.
 - **Truthful boundary:** The onboarding draft is UX scaffolding only. It is not tenant database state and does not grant permissions or create business records.

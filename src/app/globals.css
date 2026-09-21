@@ -990,6 +990,10 @@ p { margin: 0; }
   .choice-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 10px; }
   .choice-card { padding: 15px; border: 1px solid var(--line); border-radius: 12px; background: rgba(255,255,255,.48); color: var(--ink); text-align: left; cursor: pointer; }
   .choice-card:hover, .choice-card.is-selected { border-color: var(--accent-strong); background: rgba(158,199,181,.2); }
+  .choice-card strong, .choice-card span { display: block; }
+  .choice-card span { margin-top: 5px; color: var(--muted); font-size: 12px; font-weight: 500; }
+  .quiz-fieldset { margin-top: 30px; }
+  .skip-note, .onboarding-detail { margin-top: 10px; color: var(--muted); font-size: 12px; }
   .map-summary { margin-top: 38px; border-top: 1px solid var(--line); }
   .summary-row { display: grid; grid-template-columns: 180px 1fr; gap: 18px; padding: 18px 0; border-bottom: 1px solid var(--line); }
   .summary-row span { color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .08em; }
